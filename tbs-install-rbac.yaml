@@ -68,9 +68,6 @@ rules:
       - delete
       - update
       - patch
-      - get
-      - list
-      - watch
   - apiGroups:
       - "rbac.authorization.k8s.io"
     resources:
@@ -110,6 +107,7 @@ rules:
       - get
       - list
       - watch
+      - deletecollection
   - apiGroups:
       - scheduling.k8s.io
     resources:
@@ -491,7 +489,7 @@ rules:
       - create
       - update
       - delete
-# update subjects to installer user or service account
+# update subjects to installer namespace, user or service account
 ---
 apiVersion: rbac.authorization.k8s.io/v1
 kind: Role
