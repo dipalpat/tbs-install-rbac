@@ -1,0 +1,127 @@
+#@ load("@ytt:overlay", "overlay")
+
+#@overlay/match by=overlay.subset({"kind": "ClusterRole", "metadata": {"name": "build-service-admin-role"}})
+---
+#@overlay/remove
+aggregationRule: {}
+#@overlay/match missing_ok=True
+rules:
+  - apiGroups: [ "kpack.io" ]
+    resources: [ "clusterbuilders","clusterstacks","clusterstores" ]
+    verbs: [ "get","list","watch","create","patch","update","delete","deletecollection" ]
+  - apiGroups: [ "stacks.stacks-operator.tanzu.vmware.com" ]
+    resources: [ "customstacks" ]
+    verbs: [ "get","list","watch","create","patch","update","delete" ]
+
+#@overlay/match by=overlay.subset({"kind": "ClusterRole", "metadata": {"name": "build-service-user-role"}})
+---
+#@overlay/remove
+aggregationRule: {}
+#@overlay/match missing_ok=True
+rules:
+  - apiGroups: [ "kpack.io" ]
+    resources: [ "builds" ]
+    verbs: [ "patch" ]
+  - apiGroups: [ "kpack.io" ]
+    resources: [ "builds","builders","images" ]
+    verbs: [ "get","list","watch" ]
+  - apiGroups: [ "kpack.io" ]
+    resources: [ "builders" ]
+    verbs: [ "get","list","watch","create","patch","update","delete","deletecollection" ]
+  - apiGroups: [ "kpack.io" ]
+    resources: [ "clusterbuilders","clusterstacks","clusterstores" ]
+    verbs: [ "get","list","watch" ]
+  - apiGroups: [ "stacks.stacks-operator.tanzu.vmware.com" ]
+    resources: [ "customstacks" ]
+    verbs: [ "get","list","watch" ]
+  - apiGroups:
+      - ""
+    resources:
+      - pods
+      - pods/log
+    verbs:
+      - get
+      - list
+      - watch
+  - apiGroups:
+      - ""
+    resources:
+      - secrets
+    verbs:
+      - create
+      - update
+      - patch
+      - delete
+  - apiGroups:
+      - ""
+    resources:
+      - serviceaccounts
+    resourceNames:
+      - default
+    verbs:
+      - get
+      - update
+      - patch
+  - apiGroups:
+      - kpack.io
+    resources:
+      - images
+    verbs:
+      - create
+      - update
+      - delete
+      - patch
+  - apiGroups:
+      - kpack.io
+    resources:
+      - builds
+    verbs:
+      - update
+  - apiGroups:
+      - ""
+    resources:
+      - configmaps
+    verbs:
+      - get
+      - list
+      - create
+      - update
+      - delete
+      - patch
+      - watch
+
+#@overlay/match by=overlay.subset({"kind": "ClusterRole", "metadata": {"name": "build-service-cluster-resource-user-role"}})
+---
+#@overlay/remove
+aggregationRule: {}
+#@overlay/match missing_ok=True
+rules:
+  - apiGroups: [ "kpack.io" ]
+    resources: [ "clusterbuilders","clusterstacks","clusterstores" ]
+    verbs: [ "get","list","watch" ]
+
+#@overlay/match by=overlay.subset({"kind": "ClusterRole", "metadata": {"name": "build-service-namespaced-resource-user-role"}})
+---
+#@overlay/remove
+aggregationRule: {}
+#@overlay/match missing_ok=True
+rules:
+  - apiGroups: [ "kpack.io" ]
+    resources: [ "builds" ]
+    verbs: [ "patch" ]
+  - apiGroups: [ "kpack.io" ]
+    resources: [ "builds","builders","images" ]
+    verbs: [ "get","list","watch" ]
+  - apiGroups: [ "kpack.io" ]
+    resources: [ "builders" ]
+    verbs: [ "get","list","watch","create","patch","update","delete","deletecollection" ]
+  - apiGroups: [ "stacks.stacks-operator.tanzu.vmware.com" ]
+    resources: [ "customstacks" ]
+    verbs: [ "get","list","watch" ]
+
+#@overlay/match by=overlay.subset({"kind": "ClusterRole", "metadata": {"name": "kpack-controller-servicebindings-cluster-role"}})
+---
+#@overlay/remove
+aggregationRule: {}
+#@overlay/match missing_ok=True
+rules: []
