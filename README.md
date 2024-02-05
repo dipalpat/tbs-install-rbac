@@ -19,7 +19,7 @@ kubectl config set-context --current --user default
 Execute the install by Service Account User with limited RBAC
 ```
 ytt -f /tmp/bundle/config/ \ 
-  -f ./Downloads/tbs-overlay.yaml \
+  -f ./tbs-overlay.yaml \
   -v kp_default_repository='REPO' \
   -v kp_default_repository_username='REPO_USERNAME' \
   -v kp_default_repository_password='REPO_PASSWORD' \
