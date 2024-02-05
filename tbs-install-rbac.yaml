@@ -1,0 +1,591 @@
+---
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: build-service
+---
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: kpack
+---
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: cert-injection-webhook
+---
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: stacks-operator-system
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: build-service-install-cluster-role
+rules:
+  - apiGroups:
+      - "rbac.authorization.k8s.io"
+    resourceNames:
+      - stacks-operator-manager-role
+      - proxy-role
+      - proxy-rolebinding
+      - kpack-webhook-mutatingwebhookconfiguration-admin
+      - kpack-controller-servicebindings-cluster-role
+      - kpack-controller-admin
+      - cert-injection-webhook-cluster-role
+      - build-service-warmer-role
+      - build-service-secret-syncer-role
+      - build-service-admin-role
+      - build-service-admin-role-binding
+      - build-service-secret-syncer-role-binding
+      - build-service-warmer-role-binding
+      - cert-injection-webhook-cluster-role-binding
+      - kpack-controller-admin-binding
+      - kpack-controller-servicebindings-binding
+      - kpack-webhook-certs-mutatingwebhookconfiguration-admin-binding
+      - stacks-operator-manager-rolebinding
+      - metrics-reader
+      - build-service-custom-stack-modifier-role
+      - build-service-custom-stack-viewer-role
+      - custom-stack-editor-role
+      - custom-stack-viewer-role
+      - build-service-app-operator-cluster-access
+      - build-service-user-role
+      - build-service-cluster-resource-user-role
+      - build-service-namespaced-resource-user-role
+      - build-service-app-editor
+      - build-service-app-viewer
+      - build-service-app-operator
+      - build-service-app-viewer-cluster-access
+      - build-service-namespaced-resource-user-base-role
+      - build-service-dependency-updater-role
+      - build-service-dependency-updater-role-binding
+    resources:
+      - clusterroles
+      - clusterrolebindings
+    verbs:
+      - delete
+      - update
+      - patch
+      - get
+      - list
+      - watch
+  - apiGroups:
+      - "rbac.authorization.k8s.io"
+    resources:
+      - clusterroles
+      - clusterrolebindings
+    verbs:
+      - deletecollection
+      - create
+      - get
+      - list
+      - watch
+  - apiGroups:
+      - apiextensions.k8s.io
+    resourceNames:
+      - images.kpack.io
+      - builds.kpack.io
+      - builders.kpack.io
+      - sourceresolvers.kpack.io
+      - buildpacks.kpack.io
+      - clusterbuilders.kpack.io
+      - clusterbuildpacks.kpack.io
+      - clusterstacks.kpack.io
+      - clusterstores.kpack.io
+      - customstacks.stacks.stacks-operator.tanzu.vmware.com
+      - tanzunetdependencyupdaters.buildservice.tanzu.vmware.com
+    resources:
+      - customresourcedefinitions
+    verbs:
+      - update
+      - delete
+  - apiGroups:
+      - apiextensions.k8s.io
+    resources:
+      - customresourcedefinitions
+    verbs:
+      - create
+      - get
+      - list
+      - watch
+  - apiGroups:
+      - scheduling.k8s.io
+    resources:
+      - priorityclasses
+    resourceNames:
+      - kpack-build-high-priority
+      - kpack-build-low-priority
+      - kpack-control-plane
+    verbs:
+      - get
+      - list
+      - watch
+      - update
+      - delete
+  - apiGroups:
+      - scheduling.k8s.io
+    resources:
+      - priorityclasses
+    verbs:
+      - create
+  - apiGroups:
+      - "storage.k8s.io"
+    resources:
+      - storageclasses
+    verbs:
+      - get
+      - list
+      - watch
+  #the following are needed to be able to create a clusterrole that has those permissions
+  - apiGroups:
+      - admissionregistration.k8s.io
+    resourceNames:
+      - defaults.webhook.kpack.io
+      - validation.webhook.kpack.io
+      - defaults.webhook.cert-injection.tanzu.vmware.com
+    resources:
+      - mutatingwebhookconfigurations
+      - validatingwebhookconfigurations
+    verbs:
+      - update
+      - delete
+  - apiGroups:
+      - admissionregistration.k8s.io
+    resources:
+      - mutatingwebhookconfigurations
+      - validatingwebhookconfigurations
+    verbs:
+      - create
+      - get
+      - list
+      - watch
+  - apiGroups:
+      - kpack.io
+    resources:
+      - builds
+      - builds/status
+      - builds/finalizers
+      - images
+      - images/status
+      - images/finalizers
+      - builders
+      - builders/status
+      - buildpacks
+      - buildpacks/status
+      - clusterbuilders
+      - clusterbuilders/status
+      - clusterbuildpacks
+      - clusterbuildpacks/status
+      - clusterstores
+      - clusterstores/status
+      - clusterstacks
+      - clusterstacks/status
+      - sourceresolvers
+      - sourceresolvers/status
+    verbs:
+      - get
+      - list
+      - create
+      - update
+      - delete
+      - deletecollection
+      - patch
+      - watch
+  - apiGroups:
+      - buildservice.tanzu.vmware.com
+    resources:
+      - tanzunetdependencyupdaters
+      - tanzunetdependencyupdaters/status
+    verbs:
+      - get
+      - list
+      - create
+      - update
+      - delete
+      - deletecollection
+      - patch
+      - watch
+  - apiGroups:
+      - stacks.stacks-operator.tanzu.vmware.com
+    resources:
+      - customstacks
+      - customstacks/status
+    verbs:
+      - get
+      - list
+      - create
+      - update
+      - delete
+      - deletecollection
+      - patch
+      - watch
+  - apiGroups:
+      - authentication.k8s.io
+    resources:
+      - tokenreviews
+    verbs:
+      - create
+  - apiGroups:
+      - ""
+    resources:
+      - events
+    verbs:
+      - create
+  - apiGroups:
+      - authorization.k8s.io
+    resources:
+      - subjectaccessreviews
+    verbs:
+      - create
+  - apiGroups:
+    - ""
+    resources:
+    - serviceaccounts
+    verbs:
+    - get
+    - list
+    - update
+    - watch
+    - patch
+  - apiGroups:
+    - ""
+    resources:
+    - persistentvolumeclaims
+    - pods
+    - pods/log
+    - secrets
+    - configmaps
+    verbs:
+    - get
+    - list
+    - create
+    - update
+    - delete
+    - patch
+    - watch
+  - apiGroups:
+    - "coordination.k8s.io"
+    resources:
+    - leases
+    verbs:
+    - get
+    - list
+    - create
+    - update
+    - delete
+    - patch
+    - watch
+  - apiGroups:
+    - ""
+    resources:
+    - pods
+    verbs:
+    - patch
+  - apiGroups:
+    - ""
+    resources:
+    - nodes
+    verbs:
+    - list
+  - apiGroups:
+    - ""
+    resources:
+    - namespaces
+    verbs:
+    - get
+    - list
+    - watch
+  - apiGroups:
+    - ""
+    resources:
+    - namespaces/finalizers
+    resourceNames:
+    - kpack
+    verbs:
+    - update
+  - nonResourceURLs:
+      - "/metrics"
+    verbs:
+      - get
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: build-service-install-role
+  namespace: build-service
+rules:
+  - apiGroups:
+      - ""
+    resources:
+      - configmaps
+      - secrets
+      - serviceaccounts
+      - services
+      - namespaces
+      - pods/log
+      - pods
+      - persistentvolumeclaims
+      - nodes
+    verbs:
+      - get
+      - list
+      - create
+      - update
+      - delete
+      - watch
+      - patch
+  - apiGroups:
+      - "rbac.authorization.k8s.io"
+    resources:
+      - roles
+      - rolebindings
+    verbs:
+      - '*'
+  - apiGroups:
+      - apps
+    resources:
+      - deployments
+      - daemonsets
+    verbs:
+      - get
+      - list
+      - watch
+      - update
+      - delete
+      - create
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: kpack-install-role
+  namespace: kpack
+rules:
+  - apiGroups:
+      - ""
+    resources:
+      - services
+      - serviceaccounts
+      - namespaces
+      - secrets
+      - configmaps
+    verbs:
+      - get
+      - list
+      - watch
+      - create
+      - update
+      - delete
+  - apiGroups:
+      - "rbac.authorization.k8s.io"
+    resources:
+      - roles
+      - rolebindings
+    verbs:
+      - get
+      - list
+      - watch
+      - create
+      - update
+      - delete
+  - apiGroups:
+      - apps
+    resources:
+      - deployments
+      - daemonsets
+    verbs:
+      - get
+      - list
+      - watch
+      - create
+      - update
+      - delete
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: cert-injection-webhook-install-role
+  namespace: cert-injection-webhook
+rules:
+  - apiGroups:
+      - ""
+    resources:
+      - services
+      - serviceaccounts
+      - namespaces
+      - secrets
+      - configmaps
+    verbs:
+      - get
+      - list
+      - watch
+      - create
+      - update
+      - delete
+  - apiGroups:
+      - "rbac.authorization.k8s.io"
+    resources:
+      - roles
+      - rolebindings
+    verbs:
+      - get
+      - list
+      - watch
+      - create
+      - update
+      - delete
+  - apiGroups:
+      - apps
+    resources:
+      - deployments
+    verbs:
+      - get
+      - list
+      - watch
+      - create
+      - update
+      - delete
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: stacks-operator-install-role
+  namespace: stacks-operator-system
+rules:
+  - apiGroups:
+      - ""
+    resources:
+      - services
+      - serviceaccounts
+      - namespaces
+      - secrets
+      - configmaps
+    verbs:
+      - get
+      - list
+      - watch
+      - create
+      - update
+      - delete
+  - apiGroups:
+      - "rbac.authorization.k8s.io"
+    resources:
+      - roles
+      - rolebindings
+    verbs:
+      - get
+      - list
+      - watch
+      - create
+      - update
+      - delete
+  - apiGroups:
+      - apps
+    resources:
+      - deployments
+    verbs:
+      - get
+      - list
+      - watch
+      - create
+      - update
+      - delete
+# update subjects to installer user or service account
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: kapp-role
+  namespace: default
+rules:
+  - apiGroups:
+      - ""
+    resources:
+      - configmaps
+    verbs:
+      - '*'
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: kapp-role-rolebinding
+  namespace: default
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: Role
+  name: kapp-role
+subjects:
+- kind: ServiceAccount
+  name: default
+  namespace: default      
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: stacks-operator-install-rolebinding
+  namespace: stacks-operator-system
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: Role
+  name: stacks-operator-install-role
+subjects:
+- kind: ServiceAccount
+  name: default
+  namespace: default
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: cert-injection-webhook-install-rolebinding
+  namespace: cert-injection-webhook
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: Role
+  name: cert-injection-webhook-install-role
+subjects:
+- kind: ServiceAccount
+  name: default
+  namespace: default
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: build-service-install-rolebinding
+  namespace: build-service
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: Role
+  name: build-service-install-role
+subjects:
+- kind: ServiceAccount
+  name: default
+  namespace: default
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: kpack-install-rolebinding
+  namespace: kpack
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: Role
+  name: kpack-install-role
+subjects:
+- kind: ServiceAccount
+  name: default
+  namespace: default
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: build-service-install-cluster-rolebinding
+  namespace: default
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: build-service-install-cluster-role
+subjects:
+- kind: ServiceAccount
+  name: default
+  namespace: default
