@@ -9,15 +9,15 @@ kind: Namespace
 metadata:
   name: kpack
 ---
-apiVersion: v1
-kind: Namespace
-metadata:
-  name: cert-injection-webhook
----
-apiVersion: v1
-kind: Namespace
-metadata:
-  name: stacks-operator-system
+# apiVersion: v1
+# kind: Namespace
+# metadata:
+#   name: cert-injection-webhook
+# ---
+# apiVersion: v1
+# kind: Namespace
+# metadata:
+#   name: stacks-operator-system
 ---
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRole
@@ -122,6 +122,7 @@ rules:
       - watch
       - update
       - delete
+      - deletecollection
   - apiGroups:
       - scheduling.k8s.io
     resources:
@@ -339,7 +340,10 @@ rules:
       - roles
       - rolebindings
     verbs:
-      - '*'
+      - create
+      - delete
+      - get
+      - update
   - apiGroups:
       - apps
     resources:
@@ -399,95 +403,95 @@ rules:
       - update
       - delete
 ---
-apiVersion: rbac.authorization.k8s.io/v1
-kind: Role
-metadata:
-  name: cert-injection-webhook-install-role
-  namespace: cert-injection-webhook
-rules:
-  - apiGroups:
-      - ""
-    resources:
-      - services
-      - serviceaccounts
-      - namespaces
-      - secrets
-      - configmaps
-    verbs:
-      - get
-      - list
-      - watch
-      - create
-      - update
-      - delete
-  - apiGroups:
-      - "rbac.authorization.k8s.io"
-    resources:
-      - roles
-      - rolebindings
-    verbs:
-      - get
-      - list
-      - watch
-      - create
-      - update
-      - delete
-  - apiGroups:
-      - apps
-    resources:
-      - deployments
-    verbs:
-      - get
-      - list
-      - watch
-      - create
-      - update
-      - delete
----
-apiVersion: rbac.authorization.k8s.io/v1
-kind: Role
-metadata:
-  name: stacks-operator-install-role
-  namespace: stacks-operator-system
-rules:
-  - apiGroups:
-      - ""
-    resources:
-      - services
-      - serviceaccounts
-      - namespaces
-      - secrets
-      - configmaps
-    verbs:
-      - get
-      - list
-      - watch
-      - create
-      - update
-      - delete
-  - apiGroups:
-      - "rbac.authorization.k8s.io"
-    resources:
-      - roles
-      - rolebindings
-    verbs:
-      - get
-      - list
-      - watch
-      - create
-      - update
-      - delete
-  - apiGroups:
-      - apps
-    resources:
-      - deployments
-    verbs:
-      - get
-      - list
-      - watch
-      - create
-      - update
-      - delete
+# apiVersion: rbac.authorization.k8s.io/v1
+# kind: Role
+# metadata:
+#   name: cert-injection-webhook-install-role
+#   namespace: cert-injection-webhook
+# rules:
+#   - apiGroups:
+#       - ""
+#     resources:
+#       - services
+#       - serviceaccounts
+#       - namespaces
+#       - secrets
+#       - configmaps
+#     verbs:
+#       - get
+#       - list
+#       - watch
+#       - create
+#       - update
+#       - delete
+#   - apiGroups:
+#       - "rbac.authorization.k8s.io"
+#     resources:
+#       - roles
+#       - rolebindings
+#     verbs:
+#       - get
+#       - list
+#       - watch
+#       - create
+#       - update
+#       - delete
+#   - apiGroups:
+#       - apps
+#     resources:
+#       - deployments
+#     verbs:
+#       - get
+#       - list
+#       - watch
+#       - create
+#       - update
+#       - delete
+# ---
+# apiVersion: rbac.authorization.k8s.io/v1
+# kind: Role
+# metadata:
+#   name: stacks-operator-install-role
+#   namespace: stacks-operator-system
+# rules:
+#   - apiGroups:
+#       - ""
+#     resources:
+#       - services
+#       - serviceaccounts
+#       - namespaces
+#       - secrets
+#       - configmaps
+#     verbs:
+#       - get
+#       - list
+#       - watch
+#       - create
+#       - update
+#       - delete
+#   - apiGroups:
+#       - "rbac.authorization.k8s.io"
+#     resources:
+#       - roles
+#       - rolebindings
+#     verbs:
+#       - get
+#       - list
+#       - watch
+#       - create
+#       - update
+#       - delete
+#   - apiGroups:
+#       - apps
+#     resources:
+#       - deployments
+#     verbs:
+#       - get
+#       - list
+#       - watch
+#       - create
+#       - update
+#       - delete
 # update subjects to installer namespace, user or service account
 ---
 apiVersion: rbac.authorization.k8s.io/v1
@@ -501,7 +505,10 @@ rules:
     resources:
       - configmaps
     verbs:
-      - '*'
+      - create
+      - delete
+      - get
+      - update
 ---
 apiVersion: rbac.authorization.k8s.io/v1
 kind: RoleBinding
@@ -517,33 +524,33 @@ subjects:
   name: default
   namespace: default      
 ---
-apiVersion: rbac.authorization.k8s.io/v1
-kind: RoleBinding
-metadata:
-  name: stacks-operator-install-rolebinding
-  namespace: stacks-operator-system
-roleRef:
-  apiGroup: rbac.authorization.k8s.io
-  kind: Role
-  name: stacks-operator-install-role
-subjects:
-- kind: ServiceAccount
-  name: default
-  namespace: default
----
-apiVersion: rbac.authorization.k8s.io/v1
-kind: RoleBinding
-metadata:
-  name: cert-injection-webhook-install-rolebinding
-  namespace: cert-injection-webhook
-roleRef:
-  apiGroup: rbac.authorization.k8s.io
-  kind: Role
-  name: cert-injection-webhook-install-role
-subjects:
-- kind: ServiceAccount
-  name: default
-  namespace: default
+# apiVersion: rbac.authorization.k8s.io/v1
+# kind: RoleBinding
+# metadata:
+#   name: stacks-operator-install-rolebinding
+#   namespace: stacks-operator-system
+# roleRef:
+#   apiGroup: rbac.authorization.k8s.io
+#   kind: Role
+#   name: stacks-operator-install-role
+# subjects:
+# - kind: ServiceAccount
+#   name: default
+#   namespace: default
+# ---
+# apiVersion: rbac.authorization.k8s.io/v1
+# kind: RoleBinding
+# metadata:
+#   name: cert-injection-webhook-install-rolebinding
+#   namespace: cert-injection-webhook
+# roleRef:
+#   apiGroup: rbac.authorization.k8s.io
+#   kind: Role
+#   name: cert-injection-webhook-install-role
+# subjects:
+# - kind: ServiceAccount
+#   name: default
+#   namespace: default
 ---
 apiVersion: rbac.authorization.k8s.io/v1
 kind: RoleBinding

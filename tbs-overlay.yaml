@@ -125,3 +125,98 @@ rules:
 aggregationRule: {}
 #@overlay/match missing_ok=True
 rules: []
+
+
+
+---
+#@overlay/match by=overlay.subset({"kind": "Namespace", "metadata": {"name": "stacks-operator-system"}})
+---
+#@overlay/remove
+---
+#@overlay/match by=overlay.subset({"kind": "ConfigMap", "metadata": {"name": "stackify-image"}})
+---
+#@overlay/remove
+---
+#@overlay/match by=overlay.subset({"kind": "ServiceAccount", "metadata": {"name": "controller-manager"}})
+---
+#@overlay/remove
+---
+#@overlay/match by=overlay.subset({"kind": "Deployment", "metadata": {"name": "controller-manager"}})
+---
+#@overlay/remove
+---
+#@overlay/match by=overlay.subset({"kind": "ClusterRole", "metadata": {"name": "proxy-role"}})
+---
+#@overlay/remove
+---
+#@overlay/match by=overlay.subset({"kind": "ClusterRoleBinding", "metadata": {"name": "proxy-rolebinding"}})
+---
+#@overlay/remove
+---
+#@overlay/match by=overlay.subset({"kind": "Service", "metadata": {"name": "controller-manager-metrics-service"}})
+---
+#@overlay/remove
+---
+#@overlay/match by=overlay.subset({"kind": "ClusterRole", "metadata": {"name": "custom-stack-editor-role"}})
+---
+#@overlay/remove
+---
+#@overlay/match by=overlay.subset({"kind": "ClusterRole", "metadata": {"name": "custom-stack-viewer-role"}})
+---
+#@overlay/remove
+---
+#@overlay/match by=overlay.subset({"kind": "Role", "metadata": {"name": "leader-election-role"}})
+---
+#@overlay/remove
+---
+#@overlay/match by=overlay.subset({"kind": "RoleBinding", "metadata": {"name": "leader-election-rolebinding"}})
+---
+#@overlay/remove
+---
+#@overlay/match by=overlay.subset({"kind": "ClusterRole", "metadata": {"name": "stacks-operator-manager-role"}})
+---
+#@overlay/remove
+---
+#@overlay/match by=overlay.subset({"kind": "ClusterRoleBinding", "metadata": {"name": "stacks-operator-manager-rolebinding"}})
+---
+#@overlay/remove
+---
+#@overlay/match by=overlay.subset({"kind": "CustomResourceDefinition", "metadata": {"name": "customstacks.stacks.stacks-operator.tanzu.vmware.com"}})
+---
+#@overlay/remove
+---
+#@overlay/match by=overlay.subset({"kind": "Secret", "metadata": {"name": "tbs-install-pull-secret", "namespace": "stacks-operator-system"}})
+---
+#@overlay/remove
+---
+#@overlay/match by=overlay.subset({"kind": "ClusterRole", "metadata": {"name": "build-service-custom-stack-viewer-role"}})
+---
+#@overlay/remove
+---
+#@overlay/match by=overlay.subset({"kind": "ClusterRole", "metadata": {"name": "build-service-custom-stack-modifier-role"}})
+---
+#@overlay/remove
+---
+#@overlay/match by=overlay.subset({"kind": "ClusterRole", "metadata": {"name": "metrics-reader"}})
+---
+#@overlay/remove
+---
+#@overlay/match by=overlay.subset({"metadata": {"namespace": "cert-injection-webhook"}}), expects="2+" 
+---
+#@overlay/remove
+---
+#@overlay/match by=overlay.subset({"kind": "Namespace", "metadata": {"name": "cert-injection-webhook"}}) 
+---
+#@overlay/remove
+---
+#@overlay/match by=overlay.subset({"kind": "MutatingWebhookConfiguration", "metadata": {"name": "defaults.webhook.cert-injection.tanzu.vmware.com"}}) 
+---
+#@overlay/remove
+---
+#@overlay/match by=overlay.subset({"kind": "ClusterRole", "metadata": {"name": "cert-injection-webhook-cluster-role"}}) 
+---
+#@overlay/remove
+---
+#@overlay/match by=overlay.subset({"kind": "ClusterRoleBinding", "metadata": {"name": "cert-injection-webhook-cluster-role-binding"}}) 
+---
+#@overlay/remove
