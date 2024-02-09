@@ -72,7 +72,6 @@ rules:
       - clusterbuildpacks.kpack.io
       - clusterstacks.kpack.io
       - clusterstores.kpack.io
-      - customstacks.stacks.stacks-operator.tanzu.vmware.com
       - tanzunetdependencyupdaters.buildservice.tanzu.vmware.com
     resources:
       - customresourcedefinitions
@@ -103,13 +102,13 @@ rules:
       - watch
       - update
       - delete
-      - deletecollection
   - apiGroups:
       - scheduling.k8s.io
     resources:
       - priorityclasses
     verbs:
       - create
+      - deletecollection
   - apiGroups:
       - "storage.k8s.io"
     resources:
@@ -124,7 +123,6 @@ rules:
     resourceNames:
       - defaults.webhook.kpack.io
       - validation.webhook.kpack.io
-      - defaults.webhook.cert-injection.tanzu.vmware.com
     resources:
       - mutatingwebhookconfigurations
       - validatingwebhookconfigurations
