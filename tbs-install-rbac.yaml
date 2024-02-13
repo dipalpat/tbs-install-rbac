@@ -224,9 +224,7 @@ rules:
     verbs:
     - get
     - list
-    - update
     - watch
-    - patch
   - apiGroups:
     - ""
     resources:
@@ -235,18 +233,6 @@ rules:
     - pods/log
     - secrets
     - configmaps
-    verbs:
-    - get
-    - list
-    - create
-    - update
-    - delete
-    - patch
-    - watch
-  - apiGroups:
-    - "coordination.k8s.io"
-    resources:
-    - leases
     verbs:
     - get
     - list

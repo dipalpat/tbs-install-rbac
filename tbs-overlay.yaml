@@ -9,9 +9,6 @@ rules:
   - apiGroups: [ "kpack.io" ]
     resources: [ "clusterbuilders","clusterstacks","clusterstores" ]
     verbs: [ "get","list","watch","create","patch","update","delete","deletecollection" ]
-  - apiGroups: [ "stacks.stacks-operator.tanzu.vmware.com" ]
-    resources: [ "customstacks" ]
-    verbs: [ "get","list","watch","create","patch","update","delete" ]
 
 #@overlay/match by=overlay.subset({"kind": "ClusterRole", "metadata": {"name": "build-service-user-role"}})
 ---
@@ -30,9 +27,6 @@ rules:
     verbs: [ "get","list","watch","create","patch","update","delete","deletecollection" ]
   - apiGroups: [ "kpack.io" ]
     resources: [ "clusterbuilders","clusterstacks","clusterstores" ]
-    verbs: [ "get","list","watch" ]
-  - apiGroups: [ "stacks.stacks-operator.tanzu.vmware.com" ]
-    resources: [ "customstacks" ]
     verbs: [ "get","list","watch" ]
   - apiGroups:
       - ""
@@ -60,8 +54,6 @@ rules:
       - default
     verbs:
       - get
-      - update
-      - patch
   - apiGroups:
       - kpack.io
     resources:
@@ -220,3 +212,229 @@ rules: []
 #@overlay/match by=overlay.subset({"kind": "ClusterRoleBinding", "metadata": {"name": "cert-injection-webhook-cluster-role-binding"}}) 
 ---
 #@overlay/remove
+---
+#@overlay/match by=overlay.subset({"kind": "Role", "metadata": {"name": "kpack-webhook-certs-admin"}})
+---
+#@overlay/replace
+rules:
+- apiGroups: [""]
+  resources: [secrets]
+  verbs: [get, list, watch]
+- apiGroups: [""]
+  resourceNames: [webhook-certs]
+  resources: [secrets]
+  verbs: [update]
+- apiGroups: [""]
+  resources: [configmaps]
+  verbs: [get, list,watch]
+---
+#@overlay/match by=overlay.subset({"kind": "ClusterRole", "metadata": {"name": "build-service-user-role"}})
+---
+#@overlay/replace
+rules:
+- apiGroups:
+  - kpack.io
+  resources:
+  - builds
+  verbs:
+  - patch
+- apiGroups:
+  - kpack.io
+  resources:
+  - builds
+  - builders
+  - images
+  verbs:
+  - get
+  - list
+  - watch
+- apiGroups:
+  - kpack.io
+  resources:
+  - builders
+  verbs:
+  - get
+  - list
+  - watch
+  - create
+  - patch
+  - update
+  - delete
+  - deletecollection
+- apiGroups:
+  - kpack.io
+  resources:
+  - clusterbuilders
+  - clusterstacks
+  - clusterstores
+  verbs:
+  - get
+  - list
+  - watch
+- apiGroups:
+  - stacks.stacks-operator.tanzu.vmware.com
+  resources:
+  - customstacks
+  verbs:
+  - get
+  - list
+  - watch
+- apiGroups:
+  - ""
+  resources:
+  - pods
+  - pods/log
+  verbs:
+  - get
+  - list
+  - watch
+- apiGroups:
+  - ""
+  resources:
+  - secrets
+  verbs:
+  - create
+  - update
+  - patch
+  - delete
+- apiGroups:
+  - ""
+  resourceNames:
+  - default
+  resources:
+  - serviceaccounts
+  verbs:
+  - get
+- apiGroups:
+  - kpack.io
+  resources:
+  - images
+  verbs:
+  - create
+  - update
+  - delete
+  - patch
+- apiGroups:
+  - kpack.io
+  resources:
+  - builds
+  verbs:
+  - update
+- apiGroups:
+  - ""
+  resources:
+  - configmaps
+  verbs:
+  - get
+  - list
+  - create
+  - update
+  - delete
+  - patch
+  - watch
+---
+#@overlay/match by=overlay.subset({"kind": "ClusterRole", "metadata": {"name": "build-service-secret-syncer-role"}})
+---
+#@overlay/replace
+rules:
+- apiGroups:
+  - ""
+  resources:
+  - secrets
+  verbs:
+  - get
+  - list
+  - watch
+  - create
+  - delete
+  - update
+- apiGroups:
+  - ""
+  resources:
+  - serviceaccounts
+  verbs:
+  - get
+  - list
+  - watch
+- apiGroups:
+  - ""
+  resources:
+  - namespaces
+  verbs:
+  - get
+  - list
+  - watch
+- apiGroups:
+  - kpack.io
+  resources:
+  - images
+  verbs:
+  - get
+  - list
+  - watch
+- apiGroups:
+  - ""
+  resources:
+  - configmaps
+  verbs:
+  - get
+  - list
+  - watch
+---
+#@overlay/match by=overlay.subset({"kind": "ClusterRole", "metadata": {"name": "build-service-namespaced-resource-user-base-role"}})
+---
+#@overlay/replace
+rules:
+- apiGroups:
+  - ""
+  resources:
+  - pods
+  - pods/log
+  verbs:
+  - get
+  - list
+  - watch
+- apiGroups:
+  - ""
+  resources:
+  - secrets
+  verbs:
+  - create
+  - update
+  - patch
+  - delete
+- apiGroups:
+  - ""
+  resourceNames:
+  - default
+  resources:
+  - serviceaccounts
+  verbs:
+  - get
+- apiGroups:
+  - kpack.io
+  resources:
+  - images
+  verbs:
+  - create
+  - update
+  - delete
+  - patch
+- apiGroups:
+  - kpack.io
+  resources:
+  - builds
+  verbs:
+  - update
+- apiGroups:
+  - ""
+  resources:
+  - configmaps
+  verbs:
+  - get
+  - list
+  - create
+  - update
+  - delete
+  - patch
+  - watch
