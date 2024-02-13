@@ -2,6 +2,7 @@
 The RBAC documented in this repo is refinement of RBAC documented on TBS Documentation site. This RBAC and Overlay combined removes the need for Cluster Admin privileges needed to install TBS.
 
 This branch removed  `ca-cert-injection` and `stacks-operator` resources and related RBAC. Additionally, this does not use `leases` resource and removed `patch` and `update` permissions from `serviceaccounts`. 
+
 Adjust the Rolebindings and ClusterRoleBinding to the subject you are using in your setup accordingly. This repo assumes you are using default namespace and default service account to execute the installation. 
 
 Apply the RBAC using Admin Privileges
