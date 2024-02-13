@@ -29,8 +29,6 @@ rules:
       - kpack-controller-admin-binding
       - kpack-controller-servicebindings-binding
       - kpack-webhook-certs-mutatingwebhookconfiguration-admin-binding
-      - build-service-custom-stack-modifier-role
-      - build-service-custom-stack-viewer-role
       - build-service-app-operator-cluster-access
       - build-service-user-role
       - build-service-cluster-resource-user-role

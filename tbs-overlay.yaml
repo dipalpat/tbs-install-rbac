@@ -107,9 +107,6 @@ rules:
   - apiGroups: [ "kpack.io" ]
     resources: [ "builders" ]
     verbs: [ "get","list","watch","create","patch","update","delete","deletecollection" ]
-  - apiGroups: [ "stacks.stacks-operator.tanzu.vmware.com" ]
-    resources: [ "customstacks" ]
-    verbs: [ "get","list","watch" ]
 
 #@overlay/match by=overlay.subset({"kind": "ClusterRole", "metadata": {"name": "kpack-controller-servicebindings-cluster-role"}})
 ---
@@ -267,14 +264,6 @@ rules:
   - clusterbuilders
   - clusterstacks
   - clusterstores
-  verbs:
-  - get
-  - list
-  - watch
-- apiGroups:
-  - stacks.stacks-operator.tanzu.vmware.com
-  resources:
-  - customstacks
   verbs:
   - get
   - list
