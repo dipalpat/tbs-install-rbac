@@ -1,0 +1,129 @@
+apiVersion: admissionregistration.k8s.io/v1
+kind: ValidatingWebhookConfiguration
+metadata:
+  annotations:
+    admissions.enforcer/disabled: "true"
+  name: validation.webhook.kpack.io
+  ownerReferences:
+  - apiVersion: v1
+    blockOwnerDeletion: true
+    controller: true
+    kind: Namespace
+    name: kpack
+webhooks:
+- admissionReviewVersions:
+  - v1
+  clientConfig:
+    caBundle: ""
+    service:
+      name: kpack-webhook
+      namespace: kpack
+      path: /validate
+      port: 443
+  failurePolicy: Fail
+  matchPolicy: Exact
+  name: validation.webhook.kpack.io
+  namespaceSelector:
+    matchExpressions:
+    - key: webhooks.knative.dev/exclude
+      operator: DoesNotExist
+  objectSelector: {}
+  rules:
+  - apiGroups:
+    - kpack.io
+    apiVersions:
+    - v1alpha2
+    operations:
+    - CREATE
+    - UPDATE
+    - DELETE
+    resources:
+    - builders
+    - builders/status
+    scope: '*'
+  - apiGroups:
+    - kpack.io
+    apiVersions:
+    - v1alpha2
+    operations:
+    - CREATE
+    - UPDATE
+    - DELETE
+    resources:
+    - buildpacks
+    - buildpacks/status
+    scope: '*'
+  - apiGroups:
+    - kpack.io
+    apiVersions:
+    - v1alpha2
+    operations:
+    - CREATE
+    - UPDATE
+    - DELETE
+    resources:
+    - builds
+    - builds/status
+    scope: '*'
+  - apiGroups:
+    - kpack.io
+    apiVersions:
+    - v1alpha2
+    operations:
+    - CREATE
+    - UPDATE
+    - DELETE
+    resources:
+    - clusterbuilders
+    - clusterbuilders/status
+    scope: '*'
+  - apiGroups:
+    - kpack.io
+    apiVersions:
+    - v1alpha2
+    operations:
+    - CREATE
+    - UPDATE
+    - DELETE
+    resources:
+    - clusterbuildpacks
+    - clusterbuildpacks/status
+    scope: '*'
+  - apiGroups:
+    - kpack.io
+    apiVersions:
+    - v1alpha2
+    operations:
+    - CREATE
+    - UPDATE
+    - DELETE
+    resources:
+    - clusterstacks
+    - clusterstacks/status
+    scope: '*'
+  - apiGroups:
+    - kpack.io
+    apiVersions:
+    - v1alpha2
+    operations:
+    - CREATE
+    - UPDATE
+    - DELETE
+    resources:
+    - clusterstores
+    - clusterstores/status
+    scope: '*'
+  - apiGroups:
+    - kpack.io
+    apiVersions:
+    - v1alpha2
+    operations:
+    - CREATE
+    - UPDATE
+    - DELETE
+    resources:
+    - images
+    - images/status
+    scope: '*'
+  sideEffects: None
+  timeoutSeconds: 10

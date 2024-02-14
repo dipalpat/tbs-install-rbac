@@ -1,0 +1,122 @@
+apiVersion: admissionregistration.k8s.io/v1
+kind: MutatingWebhookConfiguration
+metadata:
+  annotations:
+    admissions.enforcer/disabled: "true"
+  name: defaults.webhook.kpack.io
+  ownerReferences:
+  - apiVersion: v1
+    blockOwnerDeletion: true
+    controller: true
+    kind: Namespace
+    name: kpack
+webhooks:
+- admissionReviewVersions:
+  - v1
+  clientConfig:
+    caBundle: ""
+    service:
+      name: kpack-webhook
+      namespace: kpack
+      path: /defaults
+      port: 443
+  failurePolicy: Fail
+  matchPolicy: Exact
+  name: defaults.webhook.kpack.io
+  namespaceSelector:
+    matchExpressions:
+    - key: webhooks.knative.dev/exclude
+      operator: DoesNotExist
+  objectSelector: {}
+  reinvocationPolicy: IfNeeded
+  rules:
+  - apiGroups:
+    - kpack.io
+    apiVersions:
+    - v1alpha2
+    operations:
+    - CREATE
+    - UPDATE
+    resources:
+    - builders
+    - builders/status
+    scope: '*'
+  - apiGroups:
+    - kpack.io
+    apiVersions:
+    - v1alpha2
+    operations:
+    - CREATE
+    - UPDATE
+    resources:
+    - buildpacks
+    - buildpacks/status
+    scope: '*'
+  - apiGroups:
+    - kpack.io
+    apiVersions:
+    - v1alpha2
+    operations:
+    - CREATE
+    - UPDATE
+    resources:
+    - builds
+    - builds/status
+    scope: '*'
+  - apiGroups:
+    - kpack.io
+    apiVersions:
+    - v1alpha2
+    operations:
+    - CREATE
+    - UPDATE
+    resources:
+    - clusterbuilders
+    - clusterbuilders/status
+    scope: '*'
+  - apiGroups:
+    - kpack.io
+    apiVersions:
+    - v1alpha2
+    operations:
+    - CREATE
+    - UPDATE
+    resources:
+    - clusterbuildpacks
+    - clusterbuildpacks/status
+    scope: '*'
+  - apiGroups:
+    - kpack.io
+    apiVersions:
+    - v1alpha2
+    operations:
+    - CREATE
+    - UPDATE
+    resources:
+    - clusterstacks
+    - clusterstacks/status
+    scope: '*'
+  - apiGroups:
+    - kpack.io
+    apiVersions:
+    - v1alpha2
+    operations:
+    - CREATE
+    - UPDATE
+    resources:
+    - clusterstores
+    - clusterstores/status
+    scope: '*'
+  - apiGroups:
+    - kpack.io
+    apiVersions:
+    - v1alpha2
+    operations:
+    - CREATE
+    - UPDATE
+    resources:
+    - images
+    - images/status
+    scope: '*'
+  sideEffects: None
+  timeoutSeconds: 10
