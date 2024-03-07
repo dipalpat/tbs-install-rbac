@@ -427,3 +427,12 @@ rules:
   - delete
   - patch
   - watch
+---
+#@overlay/match by=overlay.subset({"kind": "Namespace", "metadata": {"name": "kpack"}}) 
+---
+#@overlay/remove
+---
+#@overlay/match by=overlay.subset({"kind": "Namespace", "metadata": {"name": "build-service"}}) 
+---
+#@overlay/remove
+---
