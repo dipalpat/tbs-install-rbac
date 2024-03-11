@@ -33,3 +33,31 @@ To delete use the following command
 ```
 kapp delete -a tanzu-build-service
 ```
+
+# Resources and its usage
+
+| Type | Scope | Name | Usage |
+| ---- | ---- | ----- | ----- |
+| User Role | ClusterRole | build-service-admin-role | admin role for managing kpack.io resources i.e. clusterbuilders, clusterstacks and clusterstores | 
+| User Role | ClusterRole | build-service-app-operator-cluster-access | app operator role for managing kpack.io resources i.e. clusterbuilders, clusterbuildpacks, clusterstacks and clusterstores | 
+| User Role | ClusterRole | build-service-user-role | this should not be used | 
+| User Role | ClusterRole | build-service-cluster-resource-user-role | app dev/user role to get, list, watch cluster scoped builders, stacks and stores | 
+| User Role | ClusterRole | build-service-namespaced-resource-user-role |  app dev/user role to manage image, build, namespaced scoped builders |
+| User Role | ClusterRole | build-service-app-editor | allows a user to retrigger builds | 
+| User Role | ClusterRole | build-service-app-viewer | allows a user to vew namespaced kpack resources (builds, images, builders, buildpacks) | 
+| User Role | ClusterRole | build-service-app-operator | app operator role for managing namespaced kpack.io resources | 
+| User Role | ClusterRole | build-service-app-viewer-cluster-access | allows a user to view cluster kpack resources i.e. clusterbuilders, clusterbuildpacks, clusterstacks and clusterstores  | 
+| User Role | ClusterRole | build-service-namespaced-resource-user-base-role | this is a subrole that is used to aggreagate permissions | 
+| User Role | Role | kpack/build-service-admin-configmap-role |  used to give admin users access to modify kpack internal configmaps | 
+| User Role | Role | kpack/build-service-authenticated-kp-config-viewer | this role is deprecated | 
+| Control Plane Role | ClusterRole | build-service-dependency-updater-role | used for dependency updater manage kpack resources as well as dependency updater resources | 
+| Control Plane Role | Role | kpack/build-service-dependency-updater-kp-config-role | allows the dependency updater to read the kp config configmap | 
+| Control Plane Role | ClusterRole | kpack-controller-admin | allows the kpack controller to manage all of its crds as well as create and delete pvc and pods for builds | 
+| Control Plane Role | ClusterRole | kpack-controller-servicebindings-cluster-role | gives the kpack controller access to service binding provisioned service types | 
+| Control Plane Role | Role | kpack/kpack-controller-local-config | allows the kpack controller to read the configmaps in its namespace containing its configuration |
+| Control Plane Role | Role | kpack/kpack-webhook-certs-admin | allows the webhook to manage its certificate secret to communicate with the api server | 
+| Control Plane Role | ClusterRole | kpack-webhook-mutatingwebhookconfiguration-admin | allows the kpack webhook to inject its roles into the mutatingwebhookconfiguration | 
+| Control Plane Role | ClusterRole | build-service-secret-syncer-role | permissions used for the secret syncer, can be disabled if not using | 
+| Control Plane Role | ClusterRole | build-service-warmer-role | allows the build service smartwarmer to watch builders | 
+| Control Plane Role | Role | build-service/build-service-warmer-namespace-role | allows the build service smartwarmer to create daemonsets | 
+
