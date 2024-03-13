@@ -117,7 +117,7 @@ rules:
       - watch
   #the following are needed to be able to create a clusterrole that has those permissions
   - apiGroups:
-      - admissionregistration.k8s.io
+      - admissionregistration.eks.jpmc
     resourceNames:
       - defaults.webhook.kpack.io
       - validation.webhook.kpack.io
@@ -128,7 +128,7 @@ rules:
       - update
       - delete
   - apiGroups:
-      - admissionregistration.k8s.io
+      - admissionregistration.eks.jpmc
     resources:
       - mutatingwebhookconfigurations
       - validatingwebhookconfigurations

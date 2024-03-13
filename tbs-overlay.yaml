@@ -436,3 +436,7 @@ rules:
 ---
 #@overlay/remove
 ---
+#@overlay/match by=overlay.subset({"apiVersion": "admissionregistration.k8s.io/v1"}), expects="1+" 
+---
+#@overlay/replace
+apiVersion: admissionregistration.eks.jpmc/v1
